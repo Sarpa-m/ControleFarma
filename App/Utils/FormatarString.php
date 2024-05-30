@@ -30,6 +30,25 @@ class FormatarString
         return $resultado;
     }
 
+    /**
+     * Método responsável por verificar e limpar uma string para evitar injeção de SQL
+     *
+     * @param string $string A string a ser verificada
+     * @return string A string limpa, sem tags HTML e palavras reservadas de SQL
+     */
+    public static function isSafeString($string)
+    {
+        // Remove tags HTML
+        $strippedString = strip_tags($string);
+
+        // Regex para encontrar e remover palavras reservadas de SQL (case-insensitive)
+        $sqlKeywords = "/\b(SELECT|INSERT|UPDATE|DELETE|UNION|DROP|WHERE|LIMIT)\b/i";
+        $cleanString = preg_replace($sqlKeywords, "", $strippedString);
+
+        // Retorna a string limpa
+        return $cleanString;
+    }
+
 
     public static function telefone($n)
     {
