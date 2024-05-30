@@ -10,7 +10,7 @@ if ($_SERVER["REMOTE_HOST"] == "192.168.41.4") {
  
 }
 ini_set("display_errors", 1);
-use App\Controller\Logs_acesso\Gerar;
+
 use App\Utils\View;
 use App\Http\Middleware;
 use App\Http\Router as HttpRouter;
@@ -33,6 +33,7 @@ define('URLc', $obRouter->getcurrentUrl());
 //CONFIGURA AS CLASS DE ROTA
 $obRouter->setRoutes([
     Router\pages::class,
+    Router\login::class,
  
 ], $obRouter);
 

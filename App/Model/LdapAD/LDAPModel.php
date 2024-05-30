@@ -4,6 +4,7 @@ namespace App\Model\LdapAD;
 
 class LDAPModel
 {
+    // Conexão LDAP
     private $ldapConnection;
 
     /**
@@ -14,33 +15,41 @@ class LDAPModel
     private $ldapconn;
 
     /**
-     * Endereso servidor Ldap
+     * Endereço do servidor Ldap
      *
      * @var string
      */
     private static $ldapServer;
 
     /**
-     * Porta servidor Ldap
+     * Porta do servidor Ldap
      *
      * @var int
      */
     private static $ldapport = 389;
 
     /**
-     * Usurio administration servidor Ldap
+     * Usuário administrador do servidor Ldap
      *
      * @var string
      */
     private static $ldapBindUser;
 
     /**
-     * Senha do usurio administration servidor Ldap
+     * Senha do usuário administrador do servidor Ldap
      *
      * @var string
      */
     private static $ldapBindPassword;
 
+    /**
+     * Configura as credenciais e informações do servidor LDAP
+     *
+     * @param string $ldapServer Endereço do servidor LDAP
+     * @param int $ldapport Porta do servidor LDAP
+     * @param string $ldapBindUser Usuário administrador do servidor LDAP
+     * @param string $ldapBindPassword Senha do usuário administrador do servidor LDAP
+     */
     public static function Config($ldapServer, $ldapport, $ldapBindUser, $ldapBindPassword)
     {
         self::$ldapServer = $ldapServer;
@@ -49,28 +58,38 @@ class LDAPModel
         self::$ldapBindPassword = $ldapBindPassword;
     }
 
+    /**
+     * Construtor da classe, inicializa a conexão LDAP
+     */
     public function __construct()
     {
+        // Conecta ao servidor LDAP
         $this->ldapConnection = ldap_connect(self::$ldapServer, self::$ldapport);
 
         if (!$this->ldapConnection) {
             die("Erro ao conectar ao servidor LDAP");
         }
 
+        // Define as opções LDAP
         ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0);
 
-
+        // Realiza o bind com o servidor LDAP
         if (!ldap_bind($this->ldapConnection, self::$ldapBindUser, self::$ldapBindPassword)) {
             die("Erro ao fazer bind com o servidor LDAP");
         }
     }
 
+    /**
+     * Pesquisa um usuário no LDAP
+     *
+     * @param string $username Nome de usuário
+     * @param array $attributes Atributos a serem retornados
+     * @return array Entradas do LDAP
+     */
     public function searchUser($username, $attributes = ["cn", "mail", "memberOf", "samaccountname"])
     {
         $filter = "(sAMAccountName=$username)";
-        //$attributes = ["cn", "mail", "memberOf", "samaccountname"];
-
         $search = ldap_search($this->ldapConnection, "DC=mmirim,DC=local", $filter, $attributes);
 
         if (!$search) {
@@ -82,20 +101,16 @@ class LDAPModel
         return $entries;
     }
 
-
-
     /**
-     * Metodo resposavel por autenticar o suario via base LDAP 
+     * Método responsável por autenticar o usuário via base LDAP
      *
-     * @param string $username usuario
-     * @param string $password senha do usuario
-     * @param array $groupsName grupos nesseario para autenticar
-     * @return false|array
+     * @param string $username Nome de usuário
+     * @param string $password Senha do usuário
+     * @param array $groupsName Grupos necessários para autenticação
+     * @return false|array Retorna os dados do usuário se autenticado ou false se falhar
      */
     public function authenticateUser($username, $password, $groupsName = null)
     {
-
-
         $entries = $this->searchUser($username, []);
 
         if ($entries['count'] === 0) {
@@ -115,7 +130,7 @@ class LDAPModel
         }
 
         if ($groupsName != null) {
-            // Verifica se o usuário pertence ao grupo especificado
+            // Verifica se o usuário pertence aos grupos especificados
             $memberOf = $entries[0]['memberof'];
             foreach ($groupsName as $groupName) {
                 $groupName = strtolower($groupName);
@@ -135,7 +150,9 @@ class LDAPModel
         return false;
     }
 
-
+    /**
+     * Desconecta do servidor LDAP
+     */
     public function disconnect()
     {
         ldap_close($this->ldapConnection);

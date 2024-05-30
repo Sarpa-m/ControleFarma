@@ -1,12 +1,13 @@
 <?php
 namespace Router;
 
-use App\Controller\Pages as ControllerPages;
+
+use App\Controller\Login as ControllerLogin;
 use App\Controller\Pages\Pacientes;
 use App\Http\Response;
 use App\Http\Router;
 
-class pages
+class login
 {
 
     /**
@@ -25,24 +26,25 @@ class pages
      */
     public static function  init($obRouter, $preUlr = null)
     {
-         $obRouter->get(self::$preUlr . '/login', [
+         $obRouter->Post(self::$preUlr . '/login', [
             'middlewares' => [
                 "required-logout"
             ],
             function ($request) {
-                return new Response(200, ControllerPages\Login::getLoginPege ($request));
+                return new Response(200, ControllerLogin\Login::setLogin($request));
             }
         ]);
 
-
-        $obRouter->get(self::$preUlr . '/', [
+        $obRouter->get(self::$preUlr . '/logoff', [
             'middlewares' => [
                 "required-login"
             ],
             function ($request) {
-                return new Response(200, Pacientes::GetVierPacientes());
+                return new Response(200, ControllerLogin\Login::setLogout($request));
             }
         ]);
+
+       
        
 
     }
