@@ -1,0 +1,35 @@
+CREATE TABLE F_Pacientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Identificador único para cada paciente, gerado automaticamente.
+    nome_completo VARCHAR(255) NOT NULL,  -- Nome completo do paciente, obrigatório.
+    numero_sim VARCHAR(50) NOT NULL,  -- Número do SIM do paciente, obrigatório.
+    data_nascimento DATE NOT NULL,  -- Data de nascimento do paciente, obrigatória.
+    telefones VARCHAR(255),  -- Telefone de contato do paciente
+    medico_solicitante VARCHAR(255) NOT NULL  -- Nome do médico solicitante, obrigatório.
+);
+
+CREATE TABLE F_Medicamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Identificador único para cada medicamento, gerado automaticamente.
+    nome VARCHAR(255) NOT NULL,  -- Nome do medicamento, obrigatório.
+    status BOOLEAN DEFAULT TRUE  -- Status do medicamento (ativo ou inativo), padrão é ativo (true).
+);
+
+CREATE TABLE F_Medicamentos_Fornecidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Identificador único para cada fornecimento de medicamento, gerado automaticamente.
+    paciente_id INT NOT NULL,  -- Identificador do paciente que está recebendo o medicamento, obrigatório, referenciando F_Pacientes(id).
+    medicamento_id INT NOT NULL,  -- Identificador do medicamento fornecido, obrigatório, referenciando F_Medicamentos(id).
+    dose VARCHAR(255) NOT NULL,  -- Dose do medicamento fornecido, obrigatória.
+    quantidade INT NOT NULL,  -- Quantidade do medicamento fornecido, obrigatória.
+    data_retirada DATE NOT NULL,  -- Data de retirada do medicamento, obrigatória.
+    observacoes TEXT,  -- Observações adicionais sobre o fornecimento, opcional.
+    FOREIGN KEY (paciente_id) REFERENCES F_Pacientes(id),  -- Chave estrangeira referenciando F_Pacientes(id).
+    FOREIGN KEY (medicamento_id) REFERENCES F_Medicamentos(id)  -- Chave estrangeira referenciando F_Medicamentos(id).
+);
+
+CREATE TABLE F_Renovacoes_Alteracoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Identificador único para cada renovação ou alteração, gerado automaticamente.
+    medicamento_fornecido_id INT NOT NULL,  -- Identificador do fornecimento de medicamento, obrigatório, referenciando F_Medicamentos_Fornecidos(id).
+    mes_ano DATE NOT NULL,  -- Mês e ano da renovação ou alteração, obrigatório.
+    status VARCHAR(255) NOT NULL,  -- Status da renovação ou alteração (e.g., OK, REN, AT, ALT, NOVO), obrigatório.
+    detalhes TEXT,  -- Detalhes adicionais sobre a renovação ou alteração, opcional.
+    FOREIGN KEY (medicamento_fornecido_id) REFERENCES F_Medicamentos_Fornecidos(id)  -- Chave estrangeira referenciando F_Medicamentos_Fornecidos(id).
+);

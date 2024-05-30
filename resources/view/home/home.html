@@ -1,0 +1,167 @@
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h4 class="text-center">Pacientes</h4>
+                </div>
+            </div>
+            <div class="row d-xl-flex justify-content-xl-end">
+                <div class="col-sm-3 col-lg-2">
+                    <div class="input-group"><select class="form-select form-select-sm" id="records-per-page" name="RegistroporPagina ">
+                            <optgroup label="Registro por Pagina ">
+                                <option value="10" selected="">10</option>
+                                <option value="20">25</option>
+                                <option value="30">50</option>
+                                <option value="50">100</option>
+                                
+                            </optgroup>
+                        </select></div>
+                </div>
+
+                <div class="col-xl-3">
+                    <div class="input-group"><span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg"
+                                width="1em" height="1em" viewBox="0 0 24 24" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M18.319 14.4326C20.7628 11.2941 20.542 6.75347 17.6569 3.86829C14.5327 0.744098 9.46734 0.744098 6.34315 3.86829C3.21895 6.99249 3.21895 12.0578 6.34315 15.182C9.22833 18.0672 13.769 18.2879 16.9075 15.8442C16.921 15.8595 16.9351 15.8745 16.9497 15.8891L21.1924 20.1317C21.5829 20.5223 22.2161 20.5223 22.6066 20.1317C22.9971 19.7412 22.9971 19.1081 22.6066 18.7175L18.364 14.4749C18.3493 14.4603 18.3343 14.4462 18.319 14.4326ZM16.2426 5.28251C18.5858 7.62565 18.5858 11.4246 16.2426 13.7678C13.8995 16.1109 10.1005 16.1109 7.75736 13.7678C5.41421 11.4246 5.41421 7.62565 7.75736 5.28251C10.1005 2.93936 13.8995 2.93936 16.2426 5.28251Z"
+                                    fill="currentColor"></path>
+                            </svg></span><input class="form-control form-control-sm search" type="text" id="search"
+                            placeholder="Pes quisar..."></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered results">
+                            <thead>
+                                <tr>
+                                    <th>n° SIS</th>
+                                    <th>Nome</th>
+                                    <th>Medico</th>
+                                    <th class="text-center" style="width: 71.922px;">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                           
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex justify-content-lg-center">
+                        <nav class="d-xl-flex justify-content-xl-center" id="pagination">
+                            <ul class="pagination">
+                               
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+   
+    
+
+
+    <script>
+        $(document).ready(function () {
+            let currentPage = 1;
+            let searchQuery = '';
+            let recordsPerPage = 10;
+            const maxButtons = 11;
+
+            function fetchData(page, search, records) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/dados/pacientes',
+                    data: JSON.stringify({ page: page, search: search, records: records }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        renderTable(response.content);
+                        renderPagination(response.Pagination, page);
+                    },
+                    error: function () {
+                        alert('Erro ao carregar dados.');
+                    }
+                });
+            }
+
+            function renderTable(data) {
+                const tableBody = $('#table-body');
+                tableBody.empty();
+
+                data.forEach(item => {
+                    const row = `<tr>
+                <td>${item.numero_sim}</td>
+                <td>${item.nome_completo}</td>
+                <td>${item.medico_solicitante}</td>
+                <td>
+                    <div class="d-xl-flex justify-content-xl-center">
+                        <a class="btn btn-primary d-flex justify-content-lg-center align-items-lg-center" href="/paciente/${item.id}" role="button" style="height: 40px; padding: 0; width: 40px;">
+                            <i class="typcn typcn-business-card d-flex align-items-center justify-content-lg-center" style="padding-left: 0px; padding-bottom: 6px;"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>`;
+                    tableBody.append(row);
+                });
+            }
+
+            function renderPagination(pagination, currentPage) {
+                const paginationDiv = $('#pagination ul');
+                paginationDiv.empty();
+                let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+                let endPage = startPage + maxButtons - 1;
+
+                if (endPage > pagination.length) {
+                    endPage = pagination.length;
+                    startPage = Math.max(1, endPage - maxButtons + 1);
+                }
+
+                const prevDisabled = currentPage === 1 ? 'disabled' : '';
+                const nextDisabled = currentPage === pagination.length ? 'disabled' : '';
+
+                paginationDiv.append(`<li class="page-item ${prevDisabled}"><a class="page-link" aria-label="Previous" href="#" data-page="${currentPage - 1}"><span aria-hidden="true">«</span></a></li>`);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const page = pagination.find(p => p.page === i);
+                    if (page) {
+                        const activeClass = page.current ? 'active' : '';
+                        const pageLink = `<li class="page-item"><a class="page-link ${activeClass}" href="#" data-page="${page.page}">${page.page}</a></li>`;
+                        paginationDiv.append(pageLink);
+                    }
+                }
+
+                paginationDiv.append(`<li class="page-item ${nextDisabled}"><a class="page-link" aria-label="Next" href="#" data-page="${currentPage + 1}"><span aria-hidden="true">»</span></a></li>`);
+            }
+
+            $('#pagination').on('click', 'a', function (event) {
+                event.preventDefault();
+                const page = $(this).data('page');
+                if (page) {
+                    currentPage = page;
+                    fetchData(currentPage, searchQuery, recordsPerPage);
+                }
+            });
+
+            $('#search').on('input', function () {
+                searchQuery = $(this).val();
+                fetchData(currentPage, searchQuery, recordsPerPage);
+            });
+
+            $('#records-per-page').on('change', function () {
+                recordsPerPage = $(this).val();
+                fetchData(currentPage, searchQuery, recordsPerPage);
+            });
+
+            fetchData(currentPage, searchQuery, recordsPerPage);
+        });
+
+    </script>
+
+</body>
+
+</html>

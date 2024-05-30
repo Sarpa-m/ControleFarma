@@ -1,0 +1,17 @@
+.vscode/
+*.cache
+.env
+vendor/
+*.bsdesign
+web.config
+ramaisTeste.code-workspace
+composer.lock
+HTLM/404.html
+HTLM/Home.html
+HTLM/login.html
+HTLM/Pacientes.html
+HTLM/medicamentos/medicamentos.html
+HTLM/paciente/cadastro.html
+HTLM/paciente/paciente.html
+HTLM/paciente/Registrar.html
+ControleFarma.code-workspace
