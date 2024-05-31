@@ -12,21 +12,24 @@ use App\Utils\FormatarString;
 
 class Login
 {
-   
+    
     /**
+     * Método responsável por realizar o login do usuário
      * 
      * @param Request $request Requisição HTTP
-     * @return void Retorna true se o login foi bem-sucedido, false caso contrário
+     * @return void
      */
     public static function setLogin($request)
     {
         // Formata e valida o nome de usuário
-        $username = FormatarString::isSafeString($request->getPostVars('usuario'));
+        $username = FormatarString::isSafeString($request->getPostVars('username'));
 
         // Recupera a senha
         $password = FormatarString::isSafeString($request->getPostVars('password'));
 
+        // Verifica se o nome de usuário ou a senha são nulos
         if ($username == null or $password == null) {
+            // Retorna a página de login com um alerta de credenciais inválidas
             return PagesLogin::getLoginPege($request, 2);
         }
 
@@ -35,6 +38,7 @@ class Login
 
         // Verifica se o usuário existe
         if (!($obUser instanceof User)) {
+            // Retorna a página de login com um alerta de usuário não encontrado
             return PagesLogin::getLoginPege($request, 1);
         }
 
@@ -46,6 +50,7 @@ class Login
 
         // Verifica se a autenticação foi bem-sucedida
         if (!$user) {
+            // Retorna a página de login com um alerta de falha na autenticação
             return PagesLogin::getLoginPege($request, 2);
         }
 
@@ -69,16 +74,20 @@ class Login
         // Realiza o login do usuário na sessão
         SessionLogin::login($dados);
 
+        // Redireciona para a URL principal
         $request->getRouter()->redirect(URL);
     }
 
     /**
+     * Método responsável por realizar o logout do usuário
      * 
      * @param Request $request Requisição HTTP
-     * @return void Retorna true se o login foi bem-sucedido, false caso contrário
+     * @return void
      */
     public static function setLogout($request) {
+        // Encerra a sessão do usuário
         SessionLogin::logout();
+        // Redireciona para a página de login
         $request->getRouter()->redirect(URL."/login");
     }
 }
