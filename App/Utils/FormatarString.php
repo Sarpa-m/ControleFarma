@@ -39,7 +39,7 @@ class FormatarString
     public static function isSafeString($string)
     {
         // Remove tags HTML
-        $strippedString = strip_tags($string);
+        $strippedString = htmlspecialchars($string);
 
         // Regex para encontrar e remover palavras reservadas de SQL (case-insensitive)
         $sqlKeywords = "/\b(SELECT|INSERT|UPDATE|DELETE|UNION|DROP|WHERE|LIMIT)\b/i";

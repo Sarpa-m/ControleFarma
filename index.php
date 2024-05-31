@@ -34,6 +34,7 @@ define('URLc', $obRouter->getcurrentUrl());
 $obRouter->setRoutes([
     Router\pages::class,
     Router\login::class,
+    Router\pacientes::class,
  
 ], $obRouter);
 
@@ -57,7 +58,8 @@ AdLDAPConnection::Config(
 //DEFINE O VALOR PADÃO DAS VARIAVES DA VIEW
 View::init([
     "URL"  => URL,
-    'URLc' => URLc
+    'URLc' => URLc,
+    'title' => 'Controle Farma'
 ]);
 
 //MAPEIA OS MIDDLEWARE
