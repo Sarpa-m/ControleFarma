@@ -75,8 +75,8 @@ class Request
 
         //POST JSON 
         $inputRaw = file_get_contents('php://input');
-   
-        $this->postVars = (strlen($inputRaw) && empty($_POST))? json_decode($inputRaw,true) : $this->postVars;
+
+        $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
     }
     /**
      * Método responsavel por definir a URI
@@ -136,14 +136,31 @@ class Request
         return $this->queyParams;
     }
     /**
-     * Método responsavel por retornar os post Vars da requisição
+     * Método responsável por retornar as variáveis POST da requisição
      *
-     * @return string
+     * @param string|null $key Chave específica para buscar no array de variáveis POST
+     * @param mixed|null $default Valor padrão a ser retornado se a chave não existir ou estiver vazia
+     * @return mixed Retorna o valor da chave específica, todas as variáveis POST, o valor padrão ou null
      */
-    public function getPostVars()
+    public function getPostVars($key = null, $default = null)
     {
-        return $this->postVars;
+        // Se a chave não for fornecida, retorna todas as variáveis POST
+        if ($key == null) {
+            return $this->postVars;
+        }
+
+        // Verifica se a chave existe e não está vazia no array de variáveis POST
+        if (isset($this->postVars[$key]) && !empty($this->postVars[$key])) {
+            return $this->postVars[$key];
+        } else if ($default != null) {
+            // Retorna o valor padrão se fornecido
+            return $default;
+        }
+
+        // Retorna null se a chave não existe ou está vazia e o valor padrão não foi fornecido
+        return null;
     }
+
     /**
      * Método responsavel por retornar os cookies da requisição
      *
