@@ -20,15 +20,15 @@ class Login
      */
     public static function setLogin($request)
     {
-
-        // Recupera os dados POST
-        $PostVars = $request->getPostVars();
-
         // Formata e valida o nome de usuário
-        $username = isset($PostVars['usuario']) ? FormatarString::isSafeString($PostVars['usuario']) : "";
+        $username = FormatarString::isSafeString($request->getPostVars('usuario'));
 
         // Recupera a senha
-        $password = isset($PostVars['password']) ? $PostVars['password'] : "";
+        $password = FormatarString::isSafeString($request->getPostVars('password'));
+
+        if ($username == null or $password == null) {
+            return PagesLogin::getLoginPege($request, 2);
+        }
 
         // Recupera o usuário pelo nome de usuário
         $obUser = User::getUserByUsername($username);

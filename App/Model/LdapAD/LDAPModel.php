@@ -121,6 +121,11 @@ class LDAPModel
         // Obtém o DN (Distinguished Name) do usuário encontrado
         $userDN = $entries[0]['dn'];
 
+        if (empty($password)) {
+            // Autenticação falhou
+            return false;
+        }
+
         // Tenta autenticar o usuário com a senha fornecida
         $bind = @ldap_bind($this->ldapConnection, $userDN, $password);
 
