@@ -67,7 +67,8 @@ class LDAPModel
         $this->ldapConnection = ldap_connect(self::$ldapServer, self::$ldapport);
 
         if (!$this->ldapConnection) {
-            die("Erro ao conectar ao servidor LDAP");
+            throw new \Exception("Erro ao conectar ao servidor LDAP", 500);
+            
         }
 
         // Define as opções LDAP
@@ -76,7 +77,8 @@ class LDAPModel
 
         // Realiza o bind com o servidor LDAP
         if (!ldap_bind($this->ldapConnection, self::$ldapBindUser, self::$ldapBindPassword)) {
-            die("Erro ao fazer bind com o servidor LDAP");
+            throw new \Exception("Erro ao fazer bind com o servidor LDAP", 500);
+           
         }
     }
 
@@ -93,7 +95,8 @@ class LDAPModel
         $search = ldap_search($this->ldapConnection, "DC=mmirim,DC=local", $filter, $attributes);
 
         if (!$search) {
-            die('Erro na busca LDAP: ' . ldap_error($this->ldapConnection));
+            throw new \Exception("Erro na busca LDAP: " . ldap_error($this->ldapConnection), 500);
+          
         }
 
         $entries = ldap_get_entries($this->ldapConnection, $search);

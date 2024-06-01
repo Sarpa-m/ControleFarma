@@ -82,7 +82,8 @@ class Database{
       $this->connection = new PDO('mysql:host='.self::$host.';dbname='.self::$name.';port='.self::$port,self::$user,self::$pass);
       $this->connection->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
     }catch(PDOException $e){
-      die('ERROR: '.$e->getMessage());
+      throw new \Exception('ERROR: '.$e->getMessage(), 500);
+      
     }
   }
 
@@ -98,7 +99,7 @@ class Database{
       $statement->execute($params);
       return $statement;
     }catch(PDOException $e){
-      die('ERROR: '.$e->getMessage());
+      throw new \Exception('ERROR: '.$e->getMessage(), 500);
       
     }
   }

@@ -2,8 +2,9 @@
 
 namespace App\Http;
 
+use App\Controller\Exception\Exception as ControllerException;
 use App\Http\Middleware\Queue as MiddlewareQueue;
-use  App\Http\Request;
+use App\Http\Request;
 use Exception;
 
 class Router
@@ -14,87 +15,101 @@ class Router
      * @var string
      */
     private $url = "";
+
     /**
-     * Prefixo de todoas as rotas 
+     * Prefixo de todas as rotas 
      *
      * @var string
      */
     private $prefix = '';
+
     /**
      * Índice das rotas
      *
      * @var array
      */
     private $routes = [];
+
     /**
-     * Instancia de Request
+     * Instância de Request
      *
      * @var Request
      */
     private $request;
+
     /**
      * Content type padrão do response
      *
      * @var string
      */
     private $contentType = 'text/html';
+
     /**
-     * Método responsavel por definir a classe
+     * Método responsável por definir a classe
      *
-     * @param  mixed $url
-     * @return void
+     * @param string $url URL completa do projeto
      */
     public function __construct($url)
     {
+        // Cria uma nova instância de Request
         $this->request = new Request($this);
-        $this->url     = $url;
-        $this->serPrefix();
+
+        // Define a URL do projeto
+        $this->url = $url;
+
+        // Define o prefixo das rotas
+        $this->setPrefix();
     }
+
     /**
-     * Método responsavel por alterar o valor do contenty Type
-     * @param strinf $contentType
+     * Método responsável por alterar o valor do contentType
+     *
+     * @param string $contentType Tipo de conteúdo a ser definido
      */
     public function setContentType($contentType)
     {
         $this->contentType = $contentType;
     }
+
     /**
-     * Metodo responsaverl por configurar as rotas
+     * Método responsável por configurar as rotas
      *
-     * @param array $class
-     * @param Router $obRouter
-     * @return void
+     * @param array $class Array de classes que definem as rotas
+     * @param Router $obRouter Instância do roteador
      */
     public function setRoutes($class, $obRouter)
     {
+        // Itera sobre as classes e inicializa as rotas
         foreach ($class as $value) {
             $value::init($obRouter);
         }
     }
+
     /**
-     * Método resposavel por definir o prefixo da rota
+     * Método responsável por definir o prefixo da rota
      */
-    private function serPrefix()
+    private function setPrefix()
     {
-        //INFORMAÇOES DA URL ATUAL
+        // Obtém as informações da URL atual
         $parseUrl = parse_url($this->url);
 
-        //DEFINE O PREFIXO 
+        // Define o prefixo da rota
         $this->prefix = $parseUrl['path'] ?? '';
     }
+
     /**
-     * Método resposaver por adcionar uma rota na classe
-     * @param  string $method
-     * @param  string $route
-     * @param  array $params
+     * Método responsável por adicionar uma rota na classe
+     * 
+     * @param string $method Método HTTP (GET, POST, PUT, DELETE)
+     * @param string $route Caminho da rota
+     * @param array $params Parâmetros adicionais para a rota
      */
-    private function addRout($method, $route, $params = [])
+    private function addRoute($method, $route, $params = [])
     {
-        //FORÇA A TER "/" NO FINAL DA ROTA
+        // FORÇA A TER "/" NO FINAL DA ROTA
         $route = preg_replace('#/$#', '', $route) . "/";
 
-
-        //VALIDAÇÃO DOS PARAMETROS
+        // VALIDAÇÃO DOS PARÂMETROS
         foreach ($params as $key => $value) {
             if ($value instanceof \Closure) {
                 $params["controller"] = $value;
@@ -103,157 +118,172 @@ class Router
             }
         }
 
-        //MIDDLESWARES DA ROTA
+        // MIDDLEWARES DA ROTA
         $params['middlewares'] = $params['middlewares'] ?? [];
 
-        //Variaves da rota
+        // Variáveis da rota
         $params["variables"] = [];
 
-        //PADRÃO DE VARIAVES DAS ROTAS
+        // PADRÃO DE VARIÁVEIS DAS ROTAS
         $patternVariables = "/{(.*?)}/";
         if (preg_match_all($patternVariables, $route, $matches)) {
-            $route               = preg_replace($patternVariables, "(.*?)", $route);
+            $route = preg_replace($patternVariables, "(.*?)", $route);
             $params["variables"] = $matches[1];
         }
 
-        //Padão de validação da URL
+        // PADRÃO DE VALIDAÇÃO DA URL
         $patternRoute = "/^" . str_replace("/", "\/", $route) . "$/";
 
-
-        //Adciona a rota dentro da classe
-
+        // Adiciona a rota dentro da classe
         $this->routes[$patternRoute][$method] = $params;
     }
+
     /**
-     * Método resposavel por definir uma rota de GET
-     * @param  string $route
-     * @param  array $params
+     * Método responsável por definir uma rota de GET
+     * 
+     * @param string $route Caminho da rota
+     * @param array $params Parâmetros adicionais para a rota
      */
     public function get($route, $params = [])
     {
-        return $this->addRout("GET", $route, $params);
+        return $this->addRoute("GET", $route, $params);
     }
+
     /**
-     * Método resposavel por definir uma rota de POST
-     * @param  string $route
-     * @param  array $params
+     * Método responsável por definir uma rota de POST
+     * 
+     * @param string $route Caminho da rota
+     * @param array $params Parâmetros adicionais para a rota
      */
     public function post($route, $params = [])
     {
-        return $this->addRout("POST", $route, $params);
+        return $this->addRoute("POST", $route, $params);
     }
+
     /**
-     * Método resposavel por definir uma rota de PUT
-     * @param  string $route
-     * @param  array $params
+     * Método responsável por definir uma rota de PUT
+     * 
+     * @param string $route Caminho da rota
+     * @param array $params Parâmetros adicionais para a rota
      */
     public function put($route, $params = [])
     {
-        return $this->addRout("PUT", $route, $params);
+        return $this->addRoute("PUT", $route, $params);
     }
+
     /**
-     * Método resposavel por definir uma rota de DELETE
-     * @param  string $route
-     * @param  array $params
+     * Método responsável por definir uma rota de DELETE
+     * 
+     * @param string $route Caminho da rota
+     * @param array $params Parâmetros adicionais para a rota
      */
     public function delete($route, $params = [])
     {
-        return $this->addRout("DELETE", $route, $params);
+        return $this->addRoute("DELETE", $route, $params);
     }
+
     /**
-     * Método responsavel por retotnar a uri desconsiderando o prefixo
+     * Método responsável por retornar a URI desconsiderando o prefixo
      *
      * @return string
      */
     public function getUri()
     {
         $uri = $this->request->getUri();
-        //fatia a uri com o prefixo 
+        // Fatia a URI com o prefixo 
         $xUri = strlen($this->prefix) ? explode($this->prefix, $uri) : [$uri];
 
-        //retorna a uri sem prefixo 
+        // Retorna a URI sem prefixo 
         return end($xUri);
     }
+
     /**
-     * Método responsavel por retornar os dados da rota atual
+     * Método responsável por retornar os dados da rota atual
      *
      * @return array
      */
     private function getRoute()
     {
-        //URL
+        // URL
         $uri = $this->getUri();
 
-        //Method
+        // Método HTTP
         $httpMethod = $this->request->getHttpMethod();
 
-        //valida as rotas 
-
+        // Valida as rotas
         foreach ($this->routes as $patternRoute => $method) {
-            //Verifica se a url bate com o padrão
+            // Verifica se a URL bate com o padrão
             if (preg_match($patternRoute, $uri, $matches)) {
-                //Verifica o metodo
+                // Verifica o método
                 if (isset($method[$httpMethod])) {
-                    //REMOVI A PRIMEIRA POSIÇÃO DO matches
+                    // Remove a primeira posição do matches
                     unset($matches[0]);
 
-                    //CHAVES
+                    // Chaves
                     $keys = $method[$httpMethod]['variables'];
 
-                    $method[$httpMethod]['variables']            = array_combine($keys, $matches);
+                    $method[$httpMethod]['variables'] = array_combine($keys, $matches);
                     $method[$httpMethod]['variables']["request"] = $this->request;
 
-
-                    //Retorno dos parametros da rota 
+                    // Retorno dos parâmetros da rota 
                     return $method[$httpMethod];
                 }
-                //Metodo não permitido
-                throw new Exception("Metodo não permitido", 405);
+                // Método não permitido
+                throw new Exception("Método não permitido", 405);
             }
         }
         // URL não encontrada 
-        throw new Exception("URL não encontrada ", 404);
+        throw new Exception("URL não encontrada", 404);
     }
+
     /**
-     * Método resporaser por executar a rota
+     * Método responsável por executar a rota atual da aplicação.
+     * Este método:
+     * - Obtém a rota atual.
+     * - Verifica se o controlador da rota está definido.
+     * - Obtém os argumentos necessários para o controlador.
+     * - Executa a fila de middlewares da rota.
+     * - Retorna a resposta da execução da rota, tratando exceções.
      *
-     * @return Response
+     * @return Response A resposta da execução da rota.
      */
     public function run()
     {
-
         try {
-            //OBITEM A ROTA ATUAL
+            // Obtém a rota atual
             $route = $this->getRoute();
 
-            //Verifica o controlador
+            // Verifica se o controlador está definido
             if (!isset($route['controller'])) {
-                throw new Exception("A URL não pode ser procesada", 500);
+                throw new Exception("A URL não pode ser processada", 500);
             }
 
-            //argumetos da função 
+            // Argumentos da função
             $args = [];
 
-            //REFLECTION
+            // Reflection
             $reflection = new \ReflectionFunction($route['controller']);
 
+            // Obtém os parâmetros do controlador
             foreach ($reflection->getParameters() as $parameter) {
-
                 $name = $parameter->getName();
                 $args[$name] = $route['variables'][$name] ?? '';
             }
 
-            //RETORNA A EXCUÇÃO DA FILA DE MIDDLEWARES
+            // Executa a fila de middlewares
             return (new MiddlewareQueue(
                 $route['middlewares'],
                 $route['controller'],
                 $args
             ))->next($this->request);
         } catch (\Exception $e) {
-            
-            return new Response($e->getCode(), $this->getErrorMenssage($e->getMessage()), $this->contentType);
+
+            // Trata exceções e retorna a resposta
+            $content =  ControllerException::InterpretException($e, $this->contentType);
+            return new Response($e->getCode(), $content, $this->contentType);
         }
     }
+
     /**
      * Métod responsavel por retornar a mensagem de erro de acordo com o content type
      *
@@ -275,24 +305,30 @@ class Router
         }
     }
     /**
-     * Método responsavel por retarnar a URL atual
+     * Método responsável por retornar a URL atual
      *
-     * @return string
+     * @return string URL atual
      */
-    public function getcurrentUrl()
+    public function getCurrentUrl()
     {
+        // Concatena a URL base com o URI atual
         $URLc = $this->url . $this->getUri();
 
+        // Remove a barra final da URL, se existir
         return preg_replace('#/$#', '', $URLc);
     }
+
+    /**
+     * Método responsável por redirecionar para uma nova URL
+     *
+     * @param string $URL URL para a qual redirecionar
+     */
     public function redirect($URL)
     {
-       
-       
+        // Executa o redirecionamento
+        header('Location: ' . $URL);
 
-        //EXECUTA O REDIRECT
-        header('location: ' . $URL);
-      
+        // Encerra o script após o redirecionamento
         exit;
     }
 }

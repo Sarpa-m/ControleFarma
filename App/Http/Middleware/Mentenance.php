@@ -19,7 +19,7 @@ class Mentenance
     {
 
         if (getenv("Mentenance") == "true") {
-            throw new \Exception('PÁGINA EM MANUTEMÇÃO', 200);
+            throw new \Exception('PÁGINA EM MANUTEMÇÃO', 503);
             
         }
         //EXCUTA O PROXIMO Middleware   
