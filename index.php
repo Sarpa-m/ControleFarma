@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . "/vendor/autoload.php";
 
-//CARRAA AS VARIAVES DE AMBIENTE
+// Carrega as variáveis de ambiente
 App\Utils\Environment::load(__DIR__);
 
+// Configuração para exibição de erros em ambiente de desenvolvimento
 if ($_SERVER["REMOTE_HOST"] == "192.168.41.4") {
-   // if ($_SERVER["REMOTE_HOST"] == "192.168.255.2") {
-    error_reporting(E_ALL); 
- 
+    error_reporting(E_ALL);
 }
+
 ini_set("display_errors", 1);
 
 use App\Utils\View;
@@ -16,66 +16,61 @@ use App\Http\Middleware;
 use App\Http\Router as HttpRouter;
 use App\Utils\Database;
 use App\Http\Middleware\Queue as MiddlewareQueue;
-
 use App\Model\LdapAD\LDAPModel as AdLDAPConnection;
 
-//DEFINE A URL BASE DO PROJETO
+// Define a URL base do projeto
 define("URL", getenv("URL"));
 define("DIR", __DIR__);
 
-
-//INICIA O ROUTER
+// Inicia o Router
 $obRouter = new HttpRouter(URL);
 
-//DEFINE A URL ONDE O USÚARIO ESTA
+// Define a URL onde o usuário está
 define('URLc', $obRouter->getcurrentUrl());
 
-//CONFIGURA AS CLASS DE ROTA
+// Configura as classes de rota
 $obRouter->setRoutes([
     Router\pages::class,
     Router\login::class,
     Router\pacientes::class,
- 
 ], $obRouter);
 
-//CONFIGURA O BANCO DE DADOS
+// Configura o banco de dados
 Database::config(
     getenv("DB_HOST"),
     getenv("DB_NAME"),
     getenv("DB_USER"),
     getenv("DB_PASS"),
-    getenv("DB_PORT"),
+    getenv("DB_PORT")
 );
 
+// Configura a conexão LDAP
 AdLDAPConnection::Config(
     getenv("LDAP_AD_HOST"),
     getenv("LDAP_AD_PORT"),
     getenv("LDAP_AD_USER"),
-    getenv("LDAP_AD_PASS"),
+    getenv("LDAP_AD_PASS")
 );
 
-
-//DEFINE O VALOR PADÃO DAS VARIAVES DA VIEW
+// Define o valor padrão das variáveis da View
 View::init([
     "URL"  => URL,
     'URLc' => URLc,
     'title' => 'Controle Farma'
 ]);
 
-//MAPEIA OS MIDDLEWARE
+// Mapeia os middlewares
 MiddlewareQueue::setMap([
-    'mentenance'            => Middleware\Mentenance::class,
-    'required-logout' => Middleware\RequireLogout::class,
-    'required-login'  => Middleware\Requirelogin::class,
-    'Cache'                 => Middleware\Cache::class,
-
+    'mentenance'       => Middleware\Mentenance::class,
+    'required-logout'  => Middleware\RequireLogout::class,
+    'required-login'   => Middleware\Requirelogin::class,
+    'Cache'            => Middleware\Cache::class,
 ]);
 
-//DEFINE OS MIDDLEWARES PADOES PARA TODAS AS ROTAS
+// Define os middlewares padrões para todas as rotas
 MiddlewareQueue::setDefault([
     'mentenance'
 ]);
 
-
-//EXECUTA E INFRUME A ROTA
+// Executa e envia a resposta da rota
 $obRouter->run()->sendResponse();
