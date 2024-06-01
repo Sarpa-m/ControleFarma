@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http;
 
 use App\Http\Router;
@@ -11,51 +10,58 @@ class Request
      *
      * @var array
      */
-    private $queyParams = [];
+    private $queryParams = [];
+
     /**
-     * Variáves do POST da pagina ($_POST)
+     * Variáveis do POST da página ($_POST)
      *
      * @var array
      */
     private $postVars = [];
+
     /**
-     * Método Http da requisição
+     * Método HTTP da requisição
      *
      * @var string
      */
     private $httpMethod;
+
     /**
-     * URI da pagina (rota)
+     * URI da página (rota)
      *
      * @var string
      */
     private $uri;
+
     /**
-     * Cabesolha da requisição
+     * Cabeçalhos da requisição
      *
      * @var array
      */
     private $headers = [];
+
     /**
-     * Cookie da pagina 
+     * Cookies da página
      *
      * @var array
      */
-    private  $cookie = [];
+    private $cookie = [];
+
     /**
-     * intacia de router
+     * Instância de Router
      *
      * @var Router
      */
     private $router;
+
     /**
-     * contrutor da classe
+     * Construtor da classe
      *
      * @param Router $router
      */
     public function __construct($router)
     {
-        $this->queyParams = $_GET ?? [];
+        $this->queryParams = $_GET ?? [];
         $this->setPostVars();
         $this->headers = getallheaders();
         $this->cookie = $_COOKIE ?? [];
@@ -63,23 +69,27 @@ class Request
         $this->setUri();
         $this->router = $router;
     }
+
+    /**
+     * Método responsável por definir as variáveis POST
+     */
     private function setPostVars()
     {
-        //VERIFICA O METODO DE REQUISIÇÃO
+        // Verifica o método de requisição
         if ($this->httpMethod == "GET") {
             return false;
         }
 
-        //POST PADRÃO
+        // POST padrão
         $this->postVars = $_POST ?? [];
 
-        //POST JSON 
+        // POST JSON
         $inputRaw = file_get_contents('php://input');
-
         $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
     }
+
     /**
-     * Método responsavel por definir a URI
+     * Método responsável por definir a URI
      *
      * @return void
      */
@@ -90,8 +100,9 @@ class Request
         $uri .= "/";
         $this->uri = $uri;
     }
+
     /**
-     * Método resposaver por retornar a intacia de Router
+     * Método responsável por retornar a instância de Router
      *
      * @return Router
      */
@@ -99,8 +110,9 @@ class Request
     {
         return $this->router;
     }
+
     /**
-     * Método responsavel por retornar o método HTTP da requisição
+     * Método responsável por retornar o método HTTP da requisição
      *
      * @return string
      */
@@ -108,8 +120,9 @@ class Request
     {
         return $this->httpMethod;
     }
+
     /**
-     * Método responsavel por retornar o URI da requisição
+     * Método responsável por retornar a URI da requisição
      *
      * @return string
      */
@@ -117,24 +130,59 @@ class Request
     {
         return $this->uri;
     }
+
     /**
-     * Método responsavel por retornar o URI da requisição
+     * Método responsável por retornar os headers da requisição
      *
-     * @return string
+     * @param string|null $key Chave específica para buscar no array de headers
+     * @param mixed|null $default Valor padrão a ser retornado se a chave não existir ou estiver vazia
+     * @return mixed Retorna o valor da chave específica, todos os headers, o valor padrão ou null
      */
-    public function getHeaders()
+    public function getHeaders($key = null, $default = null)
     {
-        return $this->headers;
+        // Se a chave não for fornecida, retorna todos os headers
+        if ($key == null) {
+            return $this->headers;
+        }
+
+        // Verifica se a chave existe e não está vazia no array de headers
+        if (isset($this->headers[$key]) && !empty($this->headers[$key])) {
+            return $this->headers[$key];
+        } else if ($default != null) {
+            // Retorna o valor padrão se fornecido
+            return $default;
+        }
+
+        // Retorna null se a chave não existe ou está vazia e o valor padrão não foi fornecido
+        return null;
     }
+
     /**
-     * Método responsavel por retornar os queyParams da requisição
+     * Método responsável por retornar os queryParams da requisição
      *
-     * @return array
+     * @param string|null $key Chave específica para buscar no array de queryParams
+     * @param mixed|null $default Valor padrão a ser retornado se a chave não existir ou estiver vazia
+     * @return mixed Retorna o valor da chave específica, todos os queryParams, o valor padrão ou null
      */
-    public function getQueyParams()
+    public function getQueryParams($key = null, $default = null)
     {
-        return $this->queyParams;
+        // Se a chave não for fornecida, retorna todos os queryParams
+        if ($key == null) {
+            return $this->queryParams;
+        }
+
+        // Verifica se a chave existe e não está vazia no array de queryParams
+        if (isset($this->queryParams[$key]) && !empty($this->queryParams[$key])) {
+            return $this->queryParams[$key];
+        } else if ($default != null) {
+            // Retorna o valor padrão se fornecido
+            return $default;
+        }
+
+        // Retorna null se a chave não existe ou está vazia e o valor padrão não foi fornecido
+        return null;
     }
+
     /**
      * Método responsável por retornar as variáveis POST da requisição
      *
@@ -162,12 +210,28 @@ class Request
     }
 
     /**
-     * Método responsavel por retornar os cookies da requisição
+     * Método responsável por retornar os cookies da requisição
      *
-     * @return string
+     * @param string|null $key Chave específica para buscar no array de cookies
+     * @param mixed|null $default Valor padrão a ser retornado se a chave não existir ou estiver vazia
+     * @return mixed Retorna o valor da chave específica, todos os cookies, o valor padrão ou null
      */
-    public function getCookie()
+    public function getCookie($key = null, $default = null)
     {
-        return $this->cookie;
+        // Se a chave não for fornecida, retorna todos os cookies
+        if ($key == null) {
+            return $this->cookie;
+        }
+
+        // Verifica se a chave existe e não está vazia no array de cookies
+        if (isset($this->cookie[$key]) && !empty($this->cookie[$key])) {
+            return $this->cookie[$key];
+        } else if ($default != null) {
+            // Retorna o valor padrão se fornecido
+            return $default;
+        }
+
+        // Retorna null se a chave não existe ou está vazia e o valor padrão não foi fornecido
+        return null;
     }
 }
