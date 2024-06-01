@@ -49,9 +49,3 @@ Este sistema é projetado para gerenciar a distribuição de medicamentos em uma
 - **Biblioteca JavaScript:** jQuery
 - **Framework CSS:** Bootstrap
 
-## Instalação
-
-### Passo 1: Clonar o Repositório
-
-```bash
-git clone https://github.com/Sarpa-m/controlefarma.mogimirim.sp.gov.br
