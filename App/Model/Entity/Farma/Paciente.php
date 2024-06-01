@@ -81,6 +81,20 @@ class Paciente
     }
 
     /**
+     * Método responsável por retornar um ou mais nome de medicos ca coluna medico_solicitante
+     *
+     * @param string $where
+
+     * @param string $limit
+     * @return \PDOStatement
+     */
+    public static function getMedicos($where = null, $limit = 5)
+    {
+    
+        return self::getPacientes("medico_solicitante LIKE '%$where%'", "medico_solicitante ASC", $limit, 'DISTINCT  f_pacientes.medico_solicitante')->fetchAll(\PDO::FETCH_COLUMN, 0);
+    }
+
+    /**
      * Método responsável por retornar um paciente com base no seu ID
      *
      * @param integer $id

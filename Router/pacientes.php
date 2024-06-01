@@ -30,15 +30,27 @@ class pacientes
                 "required-login"
             ],
             function ($request) {
+                // Define a resposta para o endpoint que retorna um array de pacientes
                 return new Response(200, ControllerPacientes\Pacientes::getArrayPacientes($request), 'application/json');
             }
         ]);
 
+        $obRouter->post(self::$preUlr . '/dados/medicos', [
+            'middlewares' => [
+                "required-login" 
+            ],
+            function ($request) {
+                // Executa a função getMedicos no controlador Cadastro e retorna a resposta em formato JSON
+                return new Response(200, ControllerPacientes\Cadastro::getMedicos($request), 'application/json');
+            }
+        ]);
+        
         $obRouter->post(self::$preUlr . '/paciente/cadastro', [
             'middlewares' => [
                 "required-login"
             ],
             function ($request) {
+                // Define a resposta para o endpoint de cadastro de paciente
                 return new Response(201, ControllerPacientes\Cadastro::setCadastroDePaciente($request), 'application/json');
             }
         ]);

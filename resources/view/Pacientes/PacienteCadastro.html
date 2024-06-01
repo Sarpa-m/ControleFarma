@@ -24,12 +24,18 @@
                 <div class="col-md-6 col-lg-8 offset-md-3 offset-lg-2">
                     <h1 class="display-6 fw-bold mb-5"><span class="underline pb-1"><strong><strong>Cadastro de </strong><br><strong>Pacientes</strong></strong></span></h1>
                     <form id="cadastroPacienteForm">
-                        <div class="mb-3"><span>Nome Completo</span><input class="form-control form-control" type="text" name="nome_completo" placeholder="Nome Completo" required=""></div>
-                        <div class="mb-3" name="numero_sim" placeholder="Número SIS" required=""><span>Número SIS</span><input class="form-control form-control" type="text" name="numero_sim" placeholder="Número SIS" required=""></div>
+                        <div class="mb-3"><span>Nome Completo</span><input class="form-control form-control" type="text" name="nome_completo" placeholder="Nome Completo" required="" autocomplete="off"></div>
+                        <div class="mb-3" name="numero_sim" placeholder="Número SIS" required=""><span>Número SIS</span><input class="form-control form-control" type="text" name="numero_sim" placeholder="Número SIS" required="" autocomplete="off"></div>
                         <div class="mb-3"><span>Data de Nascimento</span><input class="form-control" type="date" required="" name="data_nascimento"></div>
-                        <div class="mb-3"><span>Telefone</span><input class="form-control form-control" type="text" name="telefone" placeholder="Telefone" required="" maxlength="15" minlength="14"></div>
-                        <div class="mb-3"><span>Nome do&nbsp;Médico Solicitante</span><input class="form-control form-control" type="text" name="medico_solicitante" placeholder="Médico Solicitante" required=""></div>
-                        <div class="d-flex justify-content-end mb-5"><button class="btn btn-primary shadow" type="submit">Cadastrar</button></div>
+                        <div class="mb-3"><span>Telefone</span><input class="form-control form-control" type="text" name="telefone" placeholder="Telefone" required="" maxlength="15" minlength="14" autocomplete="off"></div>
+                        <div class="mb-3"><span>Nome do&nbsp;Médico Solicitante</span>
+                            <div class="position-relative"><input class="form-control form-control" type="text" id="search-input" placeholder="Digite o nome do médico" autocomplete="off" name="medico_solicitante" required="">
+                                <div id="search-results" class="dropdown-menu"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-5"><button class="btn btn-primary shadow" type="submit">Cadastrar</button>
+                            <div class="dropdown"></div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -39,6 +45,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/js/cadastroPaciente.min.js"></script>
+    <script src="/assets/js/PesquisaMedico.min.js"></script>
 </body>
 
 </html>
