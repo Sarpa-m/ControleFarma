@@ -23,7 +23,7 @@ class Cadastro
         $obEntityPaciente->nome_completo = FormatarString::isSafeString($request->getPostVars('nome_completo'));
         $obEntityPaciente->numero_sim = FormatarString::isSafeString($request->getPostVars('numero_sim'));
         $obEntityPaciente->data_nascimento = FormatarString::isSafeString($request->getPostVars('data_nascimento'));
-        $obEntityPaciente->telefones = FormatarString::isSafeString($request->getPostVars('telefones'));
+        $obEntityPaciente->telefone = FormatarString::isSafeString($request->getPostVars('telefone'));
         $obEntityPaciente->medico_solicitante = FormatarString::isSafeString($request->getPostVars('medico_solicitante'));
 
 

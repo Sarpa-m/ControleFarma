@@ -35,11 +35,11 @@ class Paciente
     public $data_nascimento;
 
     /**
-     * Telefones do Paciente
+     * Telefone do Paciente
      *
      * @var string
      */
-    public $telefones;
+    public $telefone;
 
     /**
      * Médico solicitante
@@ -59,7 +59,7 @@ class Paciente
             "nome_completo" => $this->nome_completo,
             "numero_sim" => $this->numero_sim,
             "data_nascimento" => $this->data_nascimento,
-            "telefones" => $this->telefones,
+            "telefone" => $this->telefone,
             "medico_solicitante" => $this->medico_solicitante
         ]);
 
@@ -103,7 +103,7 @@ class Paciente
             "nome_completo" => $this->nome_completo,
             "numero_sim" => $this->numero_sim,
             "data_nascimento" => $this->data_nascimento,
-            "telefones" => $this->telefones,
+            "telefone" => $this->telefone,
             "medico_solicitante" => $this->medico_solicitante
         ]);
     }
