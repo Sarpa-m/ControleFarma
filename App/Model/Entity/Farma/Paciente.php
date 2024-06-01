@@ -51,7 +51,7 @@ class Paciente
     /**
      * Método responsável por cadastrar a instância atual no banco de dados
      *
-     * @return boolean
+     * @return int
      */
     public function cadastrar()
     {
@@ -63,7 +63,7 @@ class Paciente
             "medico_solicitante" => $this->medico_solicitante
         ]);
 
-        return true;
+        return $this->id;
     }
 
     /**

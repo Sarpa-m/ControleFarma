@@ -25,4 +25,22 @@ class Pacientes
             "footer" => Page::getFooter(),
         ]);
     }
+
+    /**
+     * 
+     *
+     * @param  Request $request
+     * @param  int|null $alert
+     * @return string
+     */
+    public static function GetVierPacienteCadastro()
+    {
+
+
+
+        return View::render('Pacientes\\PacienteCadastro', [
+            "header" => Page::getHeader(),
+            "footer" => Page::getFooter(),
+        ]);
+    }
 }

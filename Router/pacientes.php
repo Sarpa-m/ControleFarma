@@ -33,5 +33,14 @@ class pacientes
                 return new Response(200, ControllerPacientes\Pacientes::getArrayPacientes($request), 'application/json');
             }
         ]);
+
+        $obRouter->post(self::$preUlr . '/paciente/cadastro', [
+            'middlewares' => [
+                "required-login"
+            ],
+            function ($request) {
+                return new Response(201, ControllerPacientes\Cadastro::setCadastroDePaciente($request), 'application/json');
+            }
+        ]);
     }
 }

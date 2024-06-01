@@ -1,4 +1,5 @@
 <?php
+
 namespace Router;
 
 use App\Controller\Pages as ControllerPages;
@@ -25,16 +26,22 @@ class pages
      */
     public static function  init($obRouter, $preUlr = null)
     {
-         $obRouter->get(self::$preUlr . '/login', [
+
+        /**
+         * Configura a rota de login
+         */
+        $obRouter->get(self::$preUlr . '/login', [
             'middlewares' => [
                 "required-logout"
             ],
             function ($request) {
-                return new Response(200, ControllerPages\Login::getLoginPege ($request));
+                return new Response(200, ControllerPages\Login::getLoginPege($request));
             }
         ]);
 
-
+        /**
+         * Configura a rota de padrão 
+         */
         $obRouter->get(self::$preUlr . '/', [
             'middlewares' => [
                 "required-login"
@@ -43,7 +50,14 @@ class pages
                 return new Response(200, Pacientes::GetVierPacientes());
             }
         ]);
-       
 
+        $obRouter->get(self::$preUlr . '/paciente/cadastro', [
+            'middlewares' => [
+                "required-login"
+            ],
+            function ($request) {
+                return new Response(200, Pacientes::GetVierPacienteCadastro());
+            }
+        ]);
     }
 }
