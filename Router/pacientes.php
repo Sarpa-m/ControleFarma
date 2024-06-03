@@ -10,24 +10,25 @@ class pacientes
 {
 
     /**
-     * Pre URL da rota
+     * Prefixo da URL da rota.
      *
      * @var string
      */
     private static $preUlr = null;
 
     /**
-     * __construct
+     * Inicializa as rotas relacionadas aos pacientes.
      *
-     * @param  Router $obRouter
-     * @param  string $preUlr
+     * @param  Router $obRouter Objeto Router para definir as rotas.
+     * @param  string $preUlr Prefixo da URL das rotas.
      * @return void
      */
-    public static function  init($obRouter, $preUlr = null)
+    public static function init($obRouter, $preUlr = null)
     {
+        // Define a rota POST para obter dados dos pacientes
         $obRouter->post(self::$preUlr . '/dados/pacientes', [
             'middlewares' => [
-                "required-login"
+                "required-login" // Middleware que exige login para acessar a rota
             ],
             function ($request) {
                 // Define a resposta para o endpoint que retorna um array de pacientes
@@ -35,9 +36,10 @@ class pacientes
             }
         ]);
 
+        // Define a rota POST para obter dados dos médicos
         $obRouter->post(self::$preUlr . '/dados/medicos', [
             'middlewares' => [
-                "required-login" 
+                "required-login" // Middleware que exige login para acessar a rota
             ],
             function ($request) {
                 // Executa a função getMedicos no controlador Cadastro e retorna a resposta em formato JSON
@@ -45,13 +47,25 @@ class pacientes
             }
         ]);
         
+        // Define a rota POST para cadastrar um paciente
         $obRouter->post(self::$preUlr . '/paciente/cadastro', [
             'middlewares' => [
-                "required-login"
+                "required-login" // Middleware que exige login para acessar a rota
             ],
             function ($request) {
                 // Define a resposta para o endpoint de cadastro de paciente
                 return new Response(201, ControllerPacientes\Cadastro::setCadastroDePaciente($request), 'application/json');
+            }
+        ]);
+
+        // Define a rota POST para editar um paciente
+        $obRouter->post(self::$preUlr . '/paciente/editar', [
+            'middlewares' => [
+                "required-login" // Middleware que exige login para acessar a rota
+            ],
+            function ($request) {
+                // Define a resposta para o endpoint de edição de paciente
+                return new Response(201, ControllerPacientes\Cadastro::setEditPaciente($request));
             }
         ]);
     }
