@@ -11,52 +11,73 @@ class pages
 {
 
     /**
-     * Pre URL da rota
+     * Prefixo da URL da rota
      *
      * @var string
      */
     private static $preUlr = null;
 
     /**
-     * __construct
+     * Inicializa as rotas das páginas.
      *
-     * @param  Router $obRouter
-     * @param  string $preUlr
+     * @param  Router $obRouter Objeto Router para definir as rotas.
+     * @param  string $preUlr Prefixo da URL das rotas.
      * @return void
      */
-    public static function  init($obRouter, $preUlr = null)
+    public static function init($obRouter, $preUlr = null)
     {
-
-        /**
-         * Configura a rota de login
-         */
+        // Define a rota GET para a página de login
         $obRouter->get(self::$preUlr . '/login', [
             'middlewares' => [
-                "required-logout"
+                "required-logout" // Middleware que exige logout para acessar a rota
             ],
             function ($request) {
+                // Define a resposta para a rota de login
                 return new Response(200, ControllerPages\Login::getLoginPege($request));
             }
         ]);
 
-        /**
-         * Configura a rota de padrão 
-         */
+        // Define a rota GET para a página principal (listagem de pacientes)
         $obRouter->get(self::$preUlr . '/', [
             'middlewares' => [
-                "required-login"
+                "required-login" // Middleware que exige login para acessar a rota
             ],
             function ($request) {
-                return new Response(200, Pacientes::GetVierPacientes());
+                // Define a resposta para a rota padrão (listagem de pacientes)
+                return new Response(200, Pacientes::GetViewPacientes($request));
             }
         ]);
 
+        // Define a rota GET para a página de cadastro de paciente
         $obRouter->get(self::$preUlr . '/paciente/cadastro', [
             'middlewares' => [
-                "required-login"
+                "required-login" // Middleware que exige login para acessar a rota
             ],
             function ($request) {
-                return new Response(200, Pacientes::GetVierPacienteCadastro());
+                // Define a resposta para a rota de cadastro de paciente
+                return new Response(200, Pacientes::GetViewPacienteCadastro($request));
+            }
+        ]);
+
+        // Define a rota GET para a página de exibição de dados de um paciente específico
+        $obRouter->get(self::$preUlr . '/paciente', [
+            'middlewares' => [
+                "required-login" // Middleware que exige login para acessar a rota
+            ],
+            function ($request) {
+                // Define a resposta para a rota de exibição de dados de um paciente específico
+                return new Response(200, Pacientes::GetViewPacienteByID($request));
+            }
+        ]);
+
+        // Define a rota GET para a página de edição de dados de um paciente específico
+        $obRouter->get(self::$preUlr . '/paciente/editar', [
+            'middlewares' => [
+                "required-login" // Middleware que exige login para acessar a rota
+            ],
+            function ($request) {
+                // Define a resposta para a rota de edição de dados de um paciente específico
+                return new Response(200, Pacientes::GetViewEditPacienteByID($request));
             }
         ]);
     }
