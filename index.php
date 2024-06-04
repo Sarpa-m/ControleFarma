@@ -54,22 +54,23 @@ AdLDAPConnection::Config(
 
 // Define o valor padrão das variáveis da View
 View::init([
-    "URL"  => URL,
-    'URLc' => URLc,
+    "URL"   => URL,
+    'URLc'  => URLc,
     'title' => 'Controle Farma'
 ]);
 
 // Mapeia os middlewares
 MiddlewareQueue::setMap([
-    'mentenance'       => Middleware\Mentenance::class,
-    'required-logout'  => Middleware\RequireLogout::class,
-    'required-login'   => Middleware\Requirelogin::class,
-    'Cache'            => Middleware\Cache::class,
+    'Maintenance'       => Middleware\Maintenance::class,
+    'required-logout'   => Middleware\RequireLogout::class,
+    'required-login'    => Middleware\Requirelogin::class,
+    'Cache'             => Middleware\Cache::class,
+    'Api'               => Middleware\Api::class,
 ]);
 
 // Define os middlewares padrões para todas as rotas
 MiddlewareQueue::setDefault([
-    'mentenance'
+    'Maintenance'
 ]);
 
 // Executa e envia a resposta da rota

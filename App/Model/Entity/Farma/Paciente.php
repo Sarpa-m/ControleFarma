@@ -90,7 +90,7 @@ class Paciente
      */
     public static function getMedicos($where = null, $limit = 5)
     {
-    
+
         return self::getPacientes("medico_solicitante LIKE '%$where%'", "medico_solicitante ASC", $limit, 'DISTINCT  f_pacientes.medico_solicitante')->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
 
@@ -104,6 +104,19 @@ class Paciente
     {
         return self::getPacientes("id = $id")->fetchObject(self::class);
     }
+
+    /**
+     * Método responsável por obter um paciente pelo número SIM.
+     *
+     * @param integer $numero_sim O número SIM do paciente.
+     * @return Paciente O objeto Paciente correspondente ao número SIM fornecido.
+     */
+    public static function getPacienteByNumero_sim($numero_sim)
+    {
+        // Retorna o objeto Paciente correspondente ao número SIM fornecido.
+        return self::getPacientes("numero_sim = $numero_sim")->fetchObject(self::class);
+    }
+
 
     /**
      * Método responsável por atualizar os dados no banco com a instância atual

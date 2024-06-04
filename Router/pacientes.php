@@ -28,7 +28,8 @@ class pacientes
         // Define a rota POST para obter dados dos pacientes
         $obRouter->post(self::$preUlr . '/dados/pacientes', [
             'middlewares' => [
-                "required-login" // Middleware que exige login para acessar a rota
+                "required-login", // Middleware que exige login para acessar a rota
+                "Api"
             ],
             function ($request) {
                 // Define a resposta para o endpoint que retorna um array de pacientes
@@ -39,7 +40,8 @@ class pacientes
         // Define a rota POST para obter dados dos médicos
         $obRouter->post(self::$preUlr . '/dados/medicos', [
             'middlewares' => [
-                "required-login" // Middleware que exige login para acessar a rota
+                "required-login", // Middleware que exige login para acessar a rota
+                "Api"
             ],
             function ($request) {
                 // Executa a função getMedicos no controlador Cadastro e retorna a resposta em formato JSON
@@ -50,7 +52,8 @@ class pacientes
         // Define a rota POST para cadastrar um paciente
         $obRouter->post(self::$preUlr . '/paciente/cadastro', [
             'middlewares' => [
-                "required-login" // Middleware que exige login para acessar a rota
+                "required-login", // Middleware que exige login para acessar a rota
+                "Api"
             ],
             function ($request) {
                 // Define a resposta para o endpoint de cadastro de paciente
