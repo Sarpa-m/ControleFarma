@@ -77,7 +77,7 @@ class Page
         $url = $request->getRouter()->getcurrentUrl();
 
         //GTES
-        $queyParams = $request->getQueyParams();
+        $queyParams = $request->getQueryParams();
 
         $boxPrimeiro = "";
         $boxUtimo = "";

@@ -68,8 +68,8 @@ class Cache
         $uri =  rtrim($request->getRouter()->getUri(), '/');
 
 
-        //QUERY PARAMS
-        $queryParams = $request->getQueyParams();
+        //QUERY PARAMS 
+        $queryParams = $request->getQueryParams();
 
         $uri .= !empty($queryParams) ? '?' . http_build_query($queryParams) : '';
         $uri .= "c";
