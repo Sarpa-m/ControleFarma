@@ -5,6 +5,7 @@ namespace App\Controller\Exception;
 use App\Controller\Pages\Exception as PagesException;
 use App\Utils\View;
 use App\Http\Request;
+use App\Model\Entity\Usuarios\Log;
 
 class Exception
 {
@@ -18,6 +19,8 @@ class Exception
     public static function InterpretException($exception, $contentType)
     {
 
+
+        self::setLog($exception);
 
 
         if (getenv("Debug") == 'true') {
@@ -145,5 +148,29 @@ class Exception
 
         // Retorna as informações de erro correspondentes ao código, ou o erro padrão (500) se não encontrado
         return $errors[$code] ?? $errors[500];
+    }
+
+    private static function setLog($exception)
+    {
+        $obLog = new Log();
+
+
+        $usuario_id = (isset($_SESSION['usuario']['id'])) ? $_SESSION['usuario']['id'] : null;
+
+
+        $obLog->usuario_id = $usuario_id;
+        $obLog->log  = [
+            'Message' => $exception->getMessage(),
+            'Code' => $exception->getCode(),
+            'File' => $exception->getFile(),
+            'Line' => $exception->getLine(),
+            'Trace' => explode("\n", $exception->getTraceAsString()),
+            'GET' => $_GET,
+            'POST' => $_POST,
+            'SERVER' => $_SERVER,
+            'SESSION' => isset($_SESSION) ? $_SESSION : null
+        ];
+
+        $obLog->cadastrar();
     }
 }
