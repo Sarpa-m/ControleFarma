@@ -8,23 +8,22 @@ use App\Utils\Token;
 
 class Cache
 {
-
     /**
-     * Método responsavel por executar o Middleware
+     * Método responsável por executar o Middleware
      *
-     * @param  Request $request
-     * @param  \Closure $next
-     * @return Response
+     * @param Request $request A requisição atual.
+     * @param \Closure $next A função de callback que executa o próximo middleware.
+     * @return Response A resposta gerada, possivelmente vinda do cache.
      */
     public function handle($request, $next)
     {
-        //VERIFICA SE A ROTA ATUAL É CACHEÁVEL se sim EXCUTA O PROXIMO Middleware  
-        if (!$this->isCacheable($request))  return $next($request);
+        // Verifica se a rota atual é cacheável. Se não for, executa o próximo middleware.
+        if (!$this->isCacheable($request)) return $next($request);
 
-        //HACH DO CACHE
+        // Gera o hash do cache.
         $hash = $this->getHash($request);
 
-        //RETORNA OS DADOS DO CACHE
+        // Retorna os dados do cache, ou executa o próximo middleware se o cache estiver expirado.
         return CacheFile::getCache(
             $hash,
             getenv('CACHE_TIME'),
@@ -35,45 +34,44 @@ class Cache
     }
 
     /**
-     * Método responsavel por verifivicar se a request pode ser cacheada
-     *  
-     * @param  Request $request
-     * @return boolean
+     * Método responsável por verificar se a request pode ser cacheada.
+     *
+     * @param Request $request A requisição atual.
+     * @return boolean Indica se a requisição é cacheável.
      */
     private function isCacheable($request)
     {
-        //VALIDA O TEMPO DE CACHE
+        // Valida o tempo de cache.
         if (getenv('CACHE_TIME') <= 0) return false;
 
-        //VALIDA O METODO DA REQUSIÇÃO
+        // Valida o método da requisição.
         if ($request->getHttpMethod() != 'GET') return false;
 
-        //VALIDA O HEADER DE CACHE
+        // Valida o header de cache.
         $headers = $request->getHeaders();
-        if (isset($headers['Cache-Control']) and $headers['Cache-Control'] == 'no-cache') return false;
+        if (isset($headers['Cache-Control']) && $headers['Cache-Control'] == 'no-cache') return false;
 
-        //CACHEÁVEL
+        // Se todas as validações passarem, a requisição é cacheável.
         return true;
     }
 
     /**
-     * Método responsavel por retoenar a HACHE doi cache
+     * Método responsável por retornar o hash do cache.
      *
-     * @param Request $request
-     * @return string
+     * @param Request $request A requisição atual.
+     * @return string O hash do cache.
      */
     private function getHash($request)
     {
-        //URI DA ROTA
-        $uri =  rtrim($request->getRouter()->getUri(), '/');
+        // URI da rota.
+        $uri = rtrim($request->getRouter()->getUri(), '/');
 
-
-        //QUERY PARAMS 
+        // Query parameters.
         $queryParams = $request->getQueryParams();
-
         $uri .= !empty($queryParams) ? '?' . http_build_query($queryParams) : '';
         $uri .= "c";
-        //REMOVE AS BARRAS E RETRORNA A HASH
+
+        // Remove as barras e retorna o hash.
         return preg_replace('/[^0-9a-zA-Z]/', "-", ltrim($uri, '/'));
     }
 }
