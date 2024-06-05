@@ -3,6 +3,7 @@
 namespace Router;
 
 use App\Controller\Pages as ControllerPages;
+use App\Controller\Pages\Medicamento;
 use App\Controller\Pages\Pacientes;
 use App\Http\Response;
 use App\Http\Router;
@@ -78,6 +79,27 @@ class pages
             function ($request) {
                 // Define a resposta para a rota de edição de dados de um paciente específico
                 return new Response(200, Pacientes::GetViewEditPacienteByID($request));
+            }
+        ]);
+
+        
+         $obRouter->get(self::$preUlr . '/medicamento', [
+            'middlewares' => [
+                "required-login" 
+            ],
+            function ($request) {
+                
+                return new Response(200, Medicamento::getViewMedicamento ($request));
+            }
+        ]);
+
+        $obRouter->get(self::$preUlr . '/medicamento/cadastrar', [
+            'middlewares' => [
+                "required-login" 
+            ],
+            function ($request) {
+                
+                return new Response(200, Medicamento::getViewMedicamentoCadastro ($request));
             }
         ]);
     }

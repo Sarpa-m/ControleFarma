@@ -33,6 +33,7 @@ $obRouter->setRoutes([
     Router\pages::class,
     Router\login::class,
     Router\pacientes::class,
+    Router\medicamento::class,
 ], $obRouter);
 
 // Configura o banco de dados
