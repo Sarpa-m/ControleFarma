@@ -5,6 +5,7 @@ namespace Router;
 use App\Controller\Pages as ControllerPages;
 use App\Controller\Pages\Medicamento;
 use App\Controller\Pages\Pacientes;
+use App\Controller\Pages\RegistrarRetirada;
 use App\Http\Response;
 use App\Http\Router;
 
@@ -82,6 +83,16 @@ class pages
             }
         ]);
 
+        $obRouter->get(self::$preUlr . '/paciente/retirada/registrar', [
+            'middlewares' => [
+                "required-login", // Middleware que exige login para acessar a rota
+            ],
+            function ($request) {
+              
+                return new Response(200, RegistrarRetirada::GetViewRegistrarRetirada($request));
+            }
+        ]);
+
         
          $obRouter->get(self::$preUlr . '/medicamento', [
             'middlewares' => [
@@ -102,5 +113,7 @@ class pages
                 return new Response(200, Medicamento::getViewMedicamentoCadastro ($request));
             }
         ]);
+
+        
     }
 }

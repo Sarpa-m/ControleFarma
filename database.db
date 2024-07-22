@@ -33,3 +33,16 @@ CREATE TABLE F_Renovacoes_Alteracoes (
     detalhes TEXT,  -- Detalhes adicionais sobre a renovação ou alteração, opcional.
     FOREIGN KEY (medicamento_fornecido_id) REFERENCES F_Medicamentos_Fornecidos(id)  -- Chave estrangeira referenciando F_Medicamentos_Fornecidos(id).
 );
+
+SELECT 
+    u_usuarios.id AS usuario_id,
+    u_usuarios.username AS nome,
+    u_permissoes.id AS permissao_id,
+    u_permissoes.descricao AS descricao
+FROM 
+    u_usuario_permissoes
+INNER JOIN 
+    u_usuarios ON u_usuario_permissoes.usuario_id = u_usuarios.id
+INNER JOIN 
+    u_permissoes ON u_usuario_permissoes.permissao_id = u_permissoes.id
+WHERE usuario_id LIKE "1";

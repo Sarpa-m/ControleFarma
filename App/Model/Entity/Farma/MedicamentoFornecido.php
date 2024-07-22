@@ -28,32 +28,46 @@ class MedicamentoFornecido
     public $medicamento_id;
 
     /**
-     * Dose do Medicamento Fornecido
+     * Dose do Medicamento
      *
      * @var string
      */
     public $dose;
 
     /**
-     * Quantidade do Medicamento Fornecido
+     * Quantidade Fornecida
      *
      * @var int
      */
     public $quantidade;
 
     /**
-     * Data de Retirada do Medicamento
+     * Data da Retirada
      *
      * @var string
      */
     public $data_retirada;
 
     /**
-     * Observações Adicionais sobre o Fornecimento
+     * Observações sobre a Retirada
      *
      * @var string
      */
     public $observacoes;
+
+    /**
+     * Funcionário Responsável
+     *
+     * @var string
+     */
+    public $funcionario_id;
+
+    /**
+     * Responsável pela Retirada
+     *
+     * @var string
+     */
+    public $responsavel_retirada;
 
     /**
      * Método responsável por cadastrar a instância atual no banco de dados
@@ -62,20 +76,22 @@ class MedicamentoFornecido
      */
     public function cadastrar()
     {
-        $this->id = (new Database('F_Medicamentos_Fornecidos'))->insert([
+        $this->id = (new Database('f_medicamentos_fornecidos'))->insert([
             "paciente_id" => $this->paciente_id,
             "medicamento_id" => $this->medicamento_id,
             "dose" => $this->dose,
             "quantidade" => $this->quantidade,
             "data_retirada" => $this->data_retirada,
-            "observacoes" => $this->observacoes
+            "observacoes" => $this->observacoes,
+            "funcionario_id" => $this->funcionario_id,
+            "responsavel_retirada" => $this->responsavel_retirada
         ]);
 
         return true;
     }
 
     /**
-     * Método responsável por retornar um ou mais fornecimentos de medicamentos
+     * Método responsável por retornar um ou mais medicamentos fornecidos
      *
      * @param string $where
      * @param string $order
@@ -85,11 +101,11 @@ class MedicamentoFornecido
      */
     public static function getMedicamentosFornecidos($where = null, $order = null, $limit = null, $fields = "*")
     {
-        return (new Database('F_Medicamentos_Fornecidos'))->select($where, $order, $limit, $fields);
+        return (new Database('f_medicamentos_fornecidos'))->select($where, $order, $limit, $fields);
     }
 
     /**
-     * Método responsável por retornar um fornecimento de medicamento com base no seu ID
+     * Método responsável por retornar um medicamento fornecido com base no seu ID
      *
      * @param integer $id
      * @return MedicamentoFornecido
@@ -100,6 +116,42 @@ class MedicamentoFornecido
     }
 
     /**
+     * Método responsável por retornar um medicamento fornecido com base no seu ID
+     *
+     * @param integer $id
+     * @return \PDOStatement
+     */
+    public static function getRetirada($id,$where, $order, $limit)
+    {
+
+        $order = strlen($order) ? 'ORDER BY ' . $order : '';
+        $limit = strlen($limit) ? 'LIMIT ' . $limit : '';
+
+        $query = "SELECT 
+                        f_medicamentos_fornecidos.id,
+                        f_medicamentos_fornecidos.paciente_id,
+                        f_medicamentos_fornecidos.medicamento_id,
+                        f_medicamentos.nome as nome_medicamento,
+                        f_medicamentos_fornecidos.dose,
+                        f_medicamentos_fornecidos.quantidade,
+                        f_medicamentos_fornecidos.data_retirada,
+                        f_medicamentos_fornecidos.observacoes,
+                        f_medicamentos_fornecidos.funcionario_id,
+                        f_medicamentos_fornecidos.responsavel_retirada,
+                        COUNT(*) OVER () as qtd
+                    FROM 
+                        f_medicamentos_fornecidos
+                    JOIN 
+                        f_medicamentos ON f_medicamentos_fornecidos.medicamento_id = f_medicamentos.id
+                    WHERE
+                        f_medicamentos_fornecidos.paciente_id LIKE '$id' AND ($where)
+                    $order
+                    $limit";
+
+        return (new Database('f_medicamentos_fornecidos'))->execute($query);
+    }
+
+    /**
      * Método responsável por atualizar os dados no banco com a instância atual
      *
      * @return boolean
@@ -107,24 +159,26 @@ class MedicamentoFornecido
     public function atualizar()
     {
         // Atualiza os dados no banco
-        return (new Database('F_Medicamentos_Fornecidos'))->update("id = " . $this->id, [
+        return (new Database('f_medicamentos_fornecidos'))->update("id = " . $this->id, [
             "paciente_id" => $this->paciente_id,
             "medicamento_id" => $this->medicamento_id,
             "dose" => $this->dose,
             "quantidade" => $this->quantidade,
             "data_retirada" => $this->data_retirada,
-            "observacoes" => $this->observacoes
+            "observacoes" => $this->observacoes,
+            "funcionario_id" => $this->funcionario_id,
+            "responsavel_retirada" => $this->responsavel_retirada
         ]);
     }
 
     /**
-     * Método responsável por excluir um fornecimento de medicamento do banco
+     * Método responsável por excluir um medicamento fornecido do banco
      *
      * @return boolean
      */
     public function excluir()
     {
         // Apagar os dados no banco
-        return (new Database('F_Medicamentos_Fornecidos'))->delete("id = " . $this->id);
+        return (new Database('f_medicamentos_fornecidos'))->delete("id = " . $this->id);
     }
 }

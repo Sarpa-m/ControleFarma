@@ -3,6 +3,7 @@
 namespace Router;
 
 use App\Controller\Pacientes as ControllerPacientes;
+use App\Controller\Pacientes\RegistrarRetirada as ControllerRegistrarRetirada;
 use App\Http\Response;
 use App\Http\Router;
 
@@ -48,7 +49,7 @@ class pacientes
                 return new Response(200, ControllerPacientes\Cadastro::getMedicos($request), 'application/json');
             }
         ]);
-        
+
         // Define a rota POST para cadastrar um paciente
         $obRouter->post(self::$preUlr . '/paciente/cadastro', [
             'middlewares' => [
@@ -71,5 +72,30 @@ class pacientes
                 return new Response(201, ControllerPacientes\Cadastro::setEditPaciente($request));
             }
         ]);
+
+       
+        $obRouter->post(self::$preUlr . '/dados/medicamentofornecido', [
+            'middlewares' => [
+                "required-login", // Middleware que exige login para acessar a rota
+                "Api"
+            ],
+            function ($request) {
+              
+                return new Response(200, ControllerPacientes\MedicamentoFornecido::getArrayMedicamentoFornecido($request), 'application/json');
+            }
+        ]);
+        
+        $obRouter->post(self::$preUlr . '/paciente/retirada/registrar', [
+            'middlewares' => [
+                "required-login", // Middleware que exige login para acessar a rota
+                "Api"
+            ],
+            function ($request) {
+              
+                return new Response(200, ControllerRegistrarRetirada::setRegistrarRetirada($request));
+            }
+        ]);
+
+        
     }
 }

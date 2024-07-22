@@ -77,5 +77,6 @@ class Pacientes
 
         return View::render('Pacientes\\EditPacienteByID', $vars); // Renderiza a view com os dados do paciente para edição.
     }
-}
 
+    
+}
